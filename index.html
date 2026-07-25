@@ -1,45 +1,67 @@
 <html>
-    <head>
-        <title>Mi página web</title>
-    </head>
-    <body>
-        <h1>Bienvenido a mi página web soy el profe</h1>
-        <h1>Cita del Día</h1>
+ <head>
+ <title>Mi página web</title>
+ <style>
+   .quote-box {
+     background-color: #f4f4f9;
+     border-left: 5px solid #007bff;
+     padding: 15px;
+     margin: 15px 0;
+     max-width: 500px;
+   }
+   .author {
+     font-weight: bold;
+     color: #555;
+   }
+ </style>
+ </head>
+ <body>
+ <h1>Bienvenido a mi página web soy el profe</h1>
+ <h1>Cita del Día</h1>
 
-  <div class="quote-box">
-    <!-- Aquí se mostrará la frase -->
-    <p id="cita-texto">Cargando frase...</p>
-    <!-- Aquí se mostrará el autor -->
-    <p id="cita-autor" class="author"></p>
-  </div>
+ <div class="quote-box">
+ <!-- Aquí se mostrará la frase -->
+ <p id="cita-texto">Cargando frase...</p>
+ <!-- Aquí se mostrará el autor -->
+ <p id="cita-autor" class="author"></p>
+ </div>
 
-  <br>
-  <button onclick="obtenerCita()">Obtener otra cita</button>
+ <br>
+ <button onclick="obtenerCita()">Obtener otra cita</button>
 
-  <script>
-    function obtenerCita() {
-      // 1. Hacemos la petición a la API
-      fetch('https://api.quotable.io/quotes/random')
-        .then(respuesta => respuesta.json())
-        .then(datos => {
-          // La API devuelve un array con un objeto dentro: datos[0]
-          const cita = datos[0];
-          
-          // 2. Colocamos el contenido en los elementos HTML
-          document.getElementById('cita-texto').textContent = `"${cita.content}"`;
-          document.getElementById('cita-autor').textContent = `- ${cita.author}`;
-        })
-        .catch(error => {
-          console.error('Error al obtener la cita:', error);
-          document.getElementById('cita-texto').textContent = 'Ocurrió un error al cargar la frase.';
-        });
-    }
+ <script>
+ function obtenerCita() {
+   document.getElementById('cita-texto').textContent = 'Cargando frase...';
+   document.getElementById('cita-autor').textContent = '';
 
-    // Ejecutamos la función una vez al cargar la página
-    obtenerCita();
-  </script>
-        <footer>
-            <p>Derechos reservados &copy; 2023</p>
-        </footer>
-    </body>
+   // 1. Usamos la ruta estable /random
+   fetch('https://api.quotable.io/random')
+     .then(respuesta => {
+       if (!respuesta.ok) {
+         throw new Error(`Error HTTP: ${respuesta.status}`);
+       }
+       return respuesta.json();
+     })
+     .then(datos => {
+       // 2. Comprobamos si viene en array o como objeto directo
+       const cita = Array.isArray(datos) ? datos[0] : datos;
+       
+       // 3. Insertamos el contenido en el HTML
+       document.getElementById('cita-texto').textContent = `"${cita.content}"`;
+       document.getElementById('cita-autor').textContent = `- ${cita.author}`;
+     })
+     .catch(error => {
+       console.error('Error al obtener la cita:', error);
+       document.getElementById('cita-texto').textContent = 'Ocurrió un error al cargar la frase.';
+     });
+ }
+
+ // Ejecutamos la función una vez al cargar la página
+ obtenerCita();
+ </script>
+
+ <footer>
+ <p>Derechos reservados &copy; 2026</p>
+ </footer>
+ </body>
 </html>
