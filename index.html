@@ -1,93 +1,65 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="UTF-8">
-  <title>Mi página web</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      max-width: 600px;
-      margin: 40px auto;
-      padding: 20px;
-      text-align: center;
-    }
-    .quote-box {
-      background-color: #f4f4f9;
-      border-left: 5px solid #007bff;
-      padding: 20px;
-      margin: 20px 0;
-      border-radius: 5px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    }
-    .quote-text {
-      font-size: 1.2em;
-      color: #333;
-      margin-bottom: 10px;
-    }
-    .author {
-      font-weight: bold;
-      color: #555;
-    }
-    button {
-      padding: 10px 20px;
-      font-size: 16px;
-      background-color: #007bff;
-      color: white;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-    }
-    button:hover {
-      background-color: #0056b3;
-    }
-  </style>
-</head>
-<body>
+<html>
+ <head>
+ <title>Mi página web</title>
+ <style>
+   .quote-box {
+     background-color: #f4f4f9;
+     border-left: 5px solid #007bff;
+     padding: 15px;
+     margin: 15px 0;
+     max-width: 500px;
+   }
+   .author {
+     font-weight: bold;
+     color: #555;
+   }
+ </style>
+ </head>
+ <body>
+ <h1>Bienvenido a mi página web soy el profe</h1>
+ <h1>Cita del Día</h1>
 
-  <h1>Bienvenido a mi página web soy el profe</h1>
-  <h2>Cita del Día</h2>
+ <div class="quote-box">
+   <p id="cita-texto">Cargando frase...</p>
+   <p id="cita-autor" class="author"></p>
+ </div>
 
-  <div class="quote-box">
-    <p id="cita-texto" class="quote-text">Cargando frase...</p>
-    <p id="cita-autor" class="author"></p>
-  </div>
+ <br>
+ <button onclick="obtenerCita()">Obtener otra cita</button>
 
-  <button onclick="obtenerCita()">Obtener otra cita</button>
+ <script>
+ function obtenerCita() {
+   document.getElementById('cita-texto').textContent = 'Cargando frase...';
+   document.getElementById('cita-autor').textContent = '';
 
-  <script>
-    function obtenerCita() {
-      document.getElementById('cita-texto').textContent = 'Cargando frase...';
-      document.getElementById('cita-autor').textContent = '';
+   // Generamos un ID aleatorio entre 1 y 140 para traer una cita distinta
+   const randomId = Math.floor(Math.random() * 140) + 1;
 
-      // API ZenQuotes utilizando un proxy para evitar problemas de CORS
-      const apiUrl = 'https://corsproxy.io/?' + encodeURIComponent('https://zenquotes.io/api/random');
+   // Petición usando HTTP directamente (sin HTTPS)
+   fetch('http://dummyjson.com/quotes/' + randomId)
+     .then(respuesta => {
+       if (!respuesta.ok) {
+         throw new Error(`Error HTTP: ${respuesta.status}`);
+       }
+       return respuesta.json();
+     })
+     .then(datos => {
+       // DummyJSON devuelve un objeto simple: { quote: "...", author: "..." }
+       document.getElementById('cita-texto').textContent = `"${datos.quote}"`;
+       document.getElementById('cita-autor').textContent = `- ${datos.author}`;
+     })
+     .catch(error => {
+       console.error('Error al obtener la cita:', error);
+       document.getElementById('cita-texto').textContent = 'Ocurrió un error al cargar la frase.';
+     });
+ }
 
-      fetch(apiUrl)
-        .then(response => {
-          if (!response.ok) {
-            throw new Error('Error en la respuesta del servidor');
-          }
-          return response.json();
-        })
-        .then(data => {
-          // ZenQuotes devuelve un array con un objeto: [{ q: "Frase", a: "Autor" }]
-          const cita = data[0];
-          document.getElementById('cita-texto').textContent = `"${cita.q}"`;
-          document.getElementById('cita-autor').textContent = `- ${cita.a}`;
-        })
-        .catch(error => {
-          console.error('Error al conectar con la API:', error);
-          document.getElementById('cita-texto').textContent = 'Ocurrió un error al cargar la frase.';
-        });
-    }
+ // Ejecutamos la función una vez al cargar la página
+ obtenerCita();
+ </script>
 
-    // Cargar una cita automáticamente al abrir la página
-    obtenerCita();
-  </script>
-
-  <footer>
-    <p><br>Derechos reservados &copy; 2026</p>
-  </footer>
-
-</body>
+ <footer>
+ <p>Derechos reservados &copy; 2026</p>
+ </footer>
+ </body>
 </html>
