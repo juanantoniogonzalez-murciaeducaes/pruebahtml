@@ -4,8 +4,40 @@
     </head>
     <body>
         <h1>Bienvenido a mi página web soy el profe</h1>
-        <p>Este es una cita celebre.</p>
-        <p>Este es otro párrafo de ejemplo.</p>
+        <h1>Cita del Día</h1>
+
+  <div class="quote-box">
+    <!-- Aquí se mostrará la frase -->
+    <p id="cita-texto">Cargando frase...</p>
+    <!-- Aquí se mostrará el autor -->
+    <p id="cita-autor" class="author"></p>
+  </div>
+
+  <br>
+  <button onclick="obtenerCita()">Obtener otra cita</button>
+
+  <script>
+    function obtenerCita() {
+      // 1. Hacemos la petición a la API
+      fetch('https://api.quotable.io/quotes/random')
+        .then(respuesta => respuesta.json())
+        .then(datos => {
+          // La API devuelve un array con un objeto dentro: datos[0]
+          const cita = datos[0];
+          
+          // 2. Colocamos el contenido en los elementos HTML
+          document.getElementById('cita-texto').textContent = `"${cita.content}"`;
+          document.getElementById('cita-autor').textContent = `- ${cita.author}`;
+        })
+        .catch(error => {
+          console.error('Error al obtener la cita:', error);
+          document.getElementById('cita-texto').textContent = 'Ocurrió un error al cargar la frase.';
+        });
+    }
+
+    // Ejecutamos la función una vez al cargar la página
+    obtenerCita();
+  </script>
         <footer>
             <p>Derechos reservados &copy; 2023</p>
         </footer>
