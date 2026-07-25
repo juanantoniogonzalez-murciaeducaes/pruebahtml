@@ -20,10 +20,8 @@
  <h1>Cita del Día</h1>
 
  <div class="quote-box">
- <!-- Aquí se mostrará la frase -->
- <p id="cita-texto">Cargando frase...</p>
- <!-- Aquí se mostrará el autor -->
- <p id="cita-autor" class="author"></p>
+   <p id="cita-texto">Cargando frase...</p>
+   <p id="cita-autor" class="author"></p>
  </div>
 
  <br>
@@ -34,19 +32,17 @@
    document.getElementById('cita-texto').textContent = 'Cargando frase...';
    document.getElementById('cita-autor').textContent = '';
 
-   // 1. Usamos la ruta estable /random
-   fetch('https://api.quotable.io/random')
+   // Usamos un proxy CORS ligero para permitir que la petición fetch de JavaScript funcione desde S3
+   fetch('https://api.allorigins.win/get?url=' + encodeURIComponent('https://api.quotable.io/quotes/random'))
      .then(respuesta => {
-       if (!respuesta.ok) {
-         throw new Error(`Error HTTP: ${respuesta.status}`);
-       }
-       return respuesta.json();
+       if (respuesta.ok) return respuesta.json();
+       throw new Error('Error en la red');
      })
      .then(datos => {
-       // 2. Comprobamos si viene en array o como objeto directo
-       const cita = Array.isArray(datos) ? datos[0] : datos;
+       // AllOrigins devuelve el JSON original dentro de la propiedad 'contents'
+       const contenido = JSON.parse(datos.contents);
+       const cita = Array.isArray(contenido) ? contenido[0] : contenido;
        
-       // 3. Insertamos el contenido en el HTML
        document.getElementById('cita-texto').textContent = `"${cita.content}"`;
        document.getElementById('cita-autor').textContent = `- ${cita.author}`;
      })
