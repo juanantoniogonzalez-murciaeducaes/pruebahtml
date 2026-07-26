@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Sitio Web con Registro de Accesos</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 600px; margin: 40px auto; padding: 20px; text-align: center; }
+    .quote-box { background-color: #f4f4f9; border-left: 5px solid #007bff; padding: 20px; margin: 20px 0; border-radius: 5px; }
+    .status { font-size: 0.85em; color: #28a745; margin-top: 15px; }
+  </style>
+</head>
+<body>
+  <h1>Bienvenido a mi página web soy el profe</h1>
+  <h2>Cita del Día</h2>
+
+  <div class="quote-box">
+    <p id="cita-texto">Cargando frase...</p>
+    <p id="cita-autor"></p>
+  </div>
+
+  <p id="logger-status" class="status">Registrando visita...</p>
+
+  <script>
+    // 1. Obtención de Cita
+    function obtenerCita() {
+      fetch('https://dummyjson.com/quotes/random')
+        .then(res => res.json())
+        .then(data => {
+          document.getElementById('cita-texto').textContent = `"\${data.quote}"`;
+          document.getElementById('cita-autor').textContent = `- \${data.author}`;
+        })
+        .catch(err => {
+          document.getElementById('cita-texto').textContent = 'No se pudo cargar la cita.';
+        });
+    }
+
+    // 2. Registro Automático de IP y Hora mediante la Lambda
+    function registrarVisita() {
+      const lambdaUrl = "${aws_lambda_function_url.lambda_url.function_url}";
+      fetch(lambdaUrl)
+        .then(res => res.json())
+        .then(datos => {
+          document.getElementById('logger-status').textContent = `✓ Visita registrada correctamente (IP: \${datos.ip})`;
+        })
+        .catch(err => {
+          console.error('Error al registrar acceso:', err);
+          document.getElementById('logger-status').textContent = 'Visita no registrada en log.';
+        });
+    }
+
+    // Ejecutar al cargar la página
+    obtenerCita();
+    registrarVisita();
+  </script>
+</body>
+</html>
