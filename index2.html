@@ -23,16 +23,30 @@
   <script>
     // 1. Obtención de Cita
     function obtenerCita() {
-      fetch('https://dummyjson.com/quotes/random')
-        .then(res => res.json())
-        .then(data => {
-          document.getElementById('cita-texto').textContent = `"\${data.quote}"`;
-          document.getElementById('cita-autor').textContent = `- \${data.author}`;
-        })
-        .catch(err => {
-          document.getElementById('cita-texto').textContent = 'No se pudo cargar la cita.';
-        });
-    }
+      document.getElementById('cita-texto').textContent = 'Cargando frase...';
+   document.getElementById('cita-autor').textContent = '';
+
+   // Generamos un ID aleatorio entre 1 y 140 para traer una cita distinta
+   const randomId = Math.floor(Math.random() * 140) + 1;
+
+   // Petición usando HTTP directamente (sin HTTPS)
+   fetch('http://dummyjson.com/quotes/' + randomId)
+     .then(respuesta => {
+       if (!respuesta.ok) {
+         throw new Error(`Error HTTP: ${respuesta.status}`);
+       }
+       return respuesta.json();
+     })
+     .then(datos => {
+       // DummyJSON devuelve un objeto simple: { quote: "...", author: "..." }
+       document.getElementById('cita-texto').textContent = `"${datos.quote}"`;
+       document.getElementById('cita-autor').textContent = `- ${datos.author}`;
+     })
+     .catch(error => {
+       console.error('Error al obtener la cita:', error);
+       document.getElementById('cita-texto').textContent = 'Ocurrió un error al cargar la frase.';
+     });
+ }
 
     // 2. Registro Automático de IP y Hora mediante la Lambda
     function registrarVisita() {
