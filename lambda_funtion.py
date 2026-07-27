@@ -49,6 +49,6 @@ def lambda_handler(event, context):
     
     return {
         'statusCode': 200,
-       // 'headers': headers,
+       # 'headers': headers,
         'body': json.dumps({'message': 'Acceso registrado', 'ip': ip_acceso, 'timestamp': hora_acceso})
     }
